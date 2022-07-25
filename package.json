@@ -8,8 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "swc src -d ./build",
     "swc-build": "swc src -d build",
-    "start": "node build/index.js",
-    "heroku-postbuild": "npx prisma migrate dev && yarn build"
+    "start": "node build/index.js"
   },
   "repository": {
     "type": "git",
