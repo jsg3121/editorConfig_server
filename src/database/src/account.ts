@@ -47,7 +47,15 @@ export const validationName = async (
   }
 }
 
-export const createAccount = async (data: CreateAccountType) => {
+/**
+ * info : 회원가입 중복체크
+ * @author 장선규 jsg3121
+ * @param {CreateAccountType} data 로그인 입력 정보
+ * @returns {Promise<{code: number, description: string}>}
+ */
+export const createAccount = async (
+  data: CreateAccountType
+): Promise<{ code: number; description: string }> => {
   const signUp = {
     email: data.email,
     name: data.name,
@@ -66,6 +74,18 @@ export const createAccount = async (data: CreateAccountType) => {
     })
 
   return result
+}
+
+export const selectUser = async (
+  data: CreateAccountType['email']
+): Promise<User | null> => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: data,
+    },
+  })
+
+  return user
 }
 
 // export const updateAccount = async (data: UpdateAccountType) => {
