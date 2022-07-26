@@ -12,9 +12,9 @@ datasource db {
 
 model User {
   id          Int           @id @default(autoincrement()) // user 번호
-  name        String        @map("user_name") @db.VarChar(20) // 사용자 이름
-  email       String        @map("user_email") @db.VarChar(255) // 사용자 이메일(로그인 id)
-  password    String        @map("user_password") @db.VarChar(255) // 사용자 패스워드 (암호확)
+  name        String        @unique @map("user_name") @db.VarChar(20) // 사용자 이름
+  email       String        @unique @map("user_email") @db.VarChar(50) // 사용자 이메일(로그인 id)
+  password    String        @map("user_password") @db.VarChar(50) // 사용자 패스워드 (암호확)
   createAt    DateTime      @default(now()) @map("create_at")
   settingList SettingList[]
 
