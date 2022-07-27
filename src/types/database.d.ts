@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-global {
+declare global {
   type CreateAccountType = Pick<
     Prisma.UserCreateInput,
     'name' | 'email' | 'password'

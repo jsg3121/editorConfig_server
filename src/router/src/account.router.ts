@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import {
   createAccount,
-  selectUser,
+  signInCheck,
   TokenService,
   validationEmail,
 } from '../../database'
-import bctypt from 'bcryptjs'
 
 export const accountRouter = Router()
 
@@ -16,7 +15,6 @@ accountRouter.get<
   unknown,
   Pick<CreateAccountType, 'email'>
 >('/valid/email', async (req, res) => {
-  console.log(req.body)
   try {
     const isCheck = await validationEmail(req.body.email)
     if (isCheck) {
@@ -89,17 +87,24 @@ accountRouter.post<
   Omit<CreateAccountType, 'name'>
 >('/signin', async (req, res) => {
   try {
-    const idCheck = await selectUser(req.body.email)
-    if (idCheck) {
-      const isValid = bctypt.compareSync(req.body.password, idCheck.password)
-      if (!isValid) {
-        throw new Error('비밀번호가 일치하지 않습니다.')
-      }
-      TokenService.create()
-    } else {
-      throw new Error('존재하지 않는 이메일 입니다.')
+    const user = await signInCheck(req.body)
+
+    const [accessToken, accessTokenExp] = TokenService.createToken(
+      req.body.email
+    )
+
+    const responseData = {
+      accessToken,
+      accessTokenExp,
+      email: user.email,
+      name: user.name,
     }
+
+    res.send(responseData)
+    res.end()
   } catch (error) {
-    throw error
+    console.error(error)
+    res.send(error)
+    res.end()
   }
 })

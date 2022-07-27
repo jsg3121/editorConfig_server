@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { Types } from '../../types'
 
 const prisma = new PrismaClient()
 
@@ -76,16 +77,31 @@ export const createAccount = async (
   return result
 }
 
-export const selectUser = async (
-  data: CreateAccountType['email']
-): Promise<User | null> => {
+export const signInCheck = async (
+  data: Omit<CreateAccountType, 'name'>
+): Promise<User> => {
   const user = await prisma.user.findUnique({
     where: {
-      email: data,
+      email: data.email,
     },
   })
 
-  return user
+  if (user === null) {
+    return Promise.reject({
+      status: Types.ErrorResponse.SignIn,
+      description: '일치하는 계정이 존재하지 않습니다.',
+    })
+  } else {
+    const isValid = bcrypt.compareSync(data.password, user.password)
+    console.log(bcrypt.hashSync(data.password, 10))
+    if (!isValid) {
+      return Promise.reject({
+        status: Types.ErrorResponse.SignIn,
+        description: '일치하는 계정이 존재하지 않습니다.',
+      })
+    }
+    return user
+  }
 }
 
 // export const updateAccount = async (data: UpdateAccountType) => {
