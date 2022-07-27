@@ -51,7 +51,7 @@ export const validationName = async (
 /**
  * info : 회원가입 중복체크
  * @author 장선규 jsg3121
- * @param {CreateAccountType} data 로그인 입력 정보
+ * @param {CreateAccountType} data 회원가입 입력 정보
  * @returns {Promise<{code: number, description: string}>}
  */
 export const createAccount = async (
@@ -77,6 +77,12 @@ export const createAccount = async (
   return result
 }
 
+/**
+ * info : 로그인 체크
+ * @author 장선규 jsg3121
+ * @param {CreateAccountType} data 로그인 입력 정보
+ * @returns {Promise<User>}
+ */
 export const signInCheck = async (
   data: Omit<CreateAccountType, 'name'>
 ): Promise<User> => {
@@ -102,6 +108,25 @@ export const signInCheck = async (
     }
     return user
   }
+}
+
+/**
+ * info : 토큰 데이터 내 이메일 유효화 체크
+ * @author 장선규 jsg3121
+ * @param email 이메일
+ * @returns {boolean}
+ */
+export const tokenEmailCheck = async (email: string) => {
+  const check = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  })
+
+  if (check === null || check === undefined) {
+    return false
+  }
+  return true
 }
 
 // export const updateAccount = async (data: UpdateAccountType) => {

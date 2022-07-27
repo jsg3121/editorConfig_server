@@ -28,12 +28,10 @@ accountRouter.get<
         description: '중복된 계정이 존재합니다.',
       })
     }
-
-    res.end()
   } catch (error) {
     res.send(error)
-    res.end()
   }
+  res.end()
 })
 
 // info : 이름 체크
@@ -56,12 +54,10 @@ accountRouter.get<
         description: '중복된 이름이 존재합니다.',
       })
     }
-
-    res.end()
   } catch (error) {
     res.send(error)
-    res.end()
   }
+  res.end()
 })
 
 // info : 회원가입
@@ -71,11 +67,10 @@ accountRouter.post<'/signup', unknown, unknown, CreateAccountType>(
     try {
       const result = await createAccount(req.body)
       res.send(result)
-      res.end()
     } catch (error) {
       res.send(error)
-      res.end()
     }
+    res.end()
   }
 )
 
@@ -89,22 +84,50 @@ accountRouter.post<
   try {
     const user = await signInCheck(req.body)
 
-    const [accessToken, accessTokenExp] = TokenService.createToken(
+    const [accessToken, accessTokenExp] = TokenService.createAccessToken(
+      req.body.email
+    )
+    const [refreshToken, refreshTokenExp] = TokenService.createRfreshToken(
       req.body.email
     )
 
     const responseData = {
       accessToken,
       accessTokenExp,
+      refreshToken,
+      refreshTokenExp,
       email: user.email,
       name: user.name,
     }
 
     res.send(responseData)
-    res.end()
   } catch (error) {
     console.error(error)
     res.send(error)
+  }
+  res.end()
+})
+
+accountRouter.post<'/tokencheck', unknown, unknown, any>(
+  '/tokencheck',
+  async (req, res) => {
+    const { accessToken } = req.body
+    try {
+      const isValid = await TokenService.tokenCheck(accessToken)
+      if (!isValid) {
+        res.send({
+          isLogin: false,
+        })
+      } else {
+        res.send({
+          isLogin: true,
+        })
+      }
+    } catch (error) {
+      res.send({
+        isLogin: false,
+      })
+    }
     res.end()
   }
-})
+)
