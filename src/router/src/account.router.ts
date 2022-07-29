@@ -1,10 +1,7 @@
 import { Router } from 'express'
-import {
-  createAccount,
-  signInCheck,
-  TokenService,
-  validationEmail,
-} from '../../database'
+import { createAccount, signInCheck, validationEmail } from '../../database'
+import { TokenService } from '../../service'
+import { TOKEN } from '../../types'
 
 export const accountRouter = Router()
 
@@ -85,10 +82,13 @@ accountRouter.post<
     const user = await signInCheck(req.body)
 
     const [accessToken, accessTokenExp] = TokenService.createAccessToken(
-      req.body.email
+      req.body.email,
+      user.name
     )
-    const [refreshToken, refreshTokenExp] = TokenService.createRfreshToken(
-      req.body.email
+    const [refreshToken, refreshTokenExp] = TokenService.createRefreshToken(
+      req.body.email,
+      user.name,
+      accessToken
     )
 
     const responseData = {
@@ -108,26 +108,57 @@ accountRouter.post<
   res.end()
 })
 
-accountRouter.post<'/tokencheck', unknown, unknown, any>(
+accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
   '/tokencheck',
   async (req, res) => {
-    const { accessToken } = req.body
+    const { accessToken, refreshToken } = req.body
+
     try {
       const isValid = await TokenService.tokenCheck(accessToken)
-      if (!isValid) {
-        res.send({
-          isLogin: false,
-        })
-      } else {
+      const isRefresh = await TokenService.refreshTokenCheck(refreshToken)
+
+      // access 인증
+      if (isValid) {
         res.send({
           isLogin: true,
         })
+      } else {
+        if (!isValid && isRefresh) {
+          res.send({
+            isLogin: true,
+            ...isRefresh,
+          })
+        }
+
+        if (!isValid && !isRefresh) {
+          res.send({
+            isLogin: false,
+          })
+        }
       }
-    } catch (error) {
-      res.send({
-        isLogin: false,
-      })
+    } catch (err) {
+      console.log('err')
     }
+
+    // if (isValid === false) {
+    //   if (isRefresh === false) {
+    //     res.send({
+    //       isLogin: false,
+    //     })
+    //   } else {
+    //     res.send({
+    //       isLogin: true,
+    //       ...isRefresh,
+    //     })
+    //   }
+    // } else {
+    //   res.send({
+    //     isLogin: true,
+    //   })
+    // }
+    // res.send({
+    //   isLogin: false,
+    // })
     res.end()
   }
 )

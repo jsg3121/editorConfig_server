@@ -99,7 +99,6 @@ export const signInCheck = async (
     })
   } else {
     const isValid = bcrypt.compareSync(data.password, user.password)
-    console.log(bcrypt.hashSync(data.password, 10))
     if (!isValid) {
       return Promise.reject({
         status: Types.ErrorResponse.SignIn,
