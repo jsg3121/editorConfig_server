@@ -38,7 +38,7 @@ export const updateRefreshToken = async (userId: number, token: string) => {
 }
 
 /**
- * info : accesstoken이 유효한지 체크
+ * info : accessToken이 유효한지 체크
  * @param token 검사할 토큰
  * @returns
  */

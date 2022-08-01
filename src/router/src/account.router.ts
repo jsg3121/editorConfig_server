@@ -133,16 +133,20 @@ accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
   async (req, res) => {
     const { accessToken, refreshToken } = req.body
 
+    const isValid = await TokenService.tokenCheck(accessToken)
+    if (!isValid && refreshToken === undefined) {
+      res.send({
+        isLogin: false,
+      })
+    }
+
     try {
-      const isValid = await TokenService.tokenCheck(accessToken)
       // access 인증
       if (isValid) {
-        console.log('access true')
         res.send({
           isLogin: true,
         })
       } else {
-        console.log('access false')
         const isRefresh = await TokenService.refreshTokenCheck(refreshToken)
 
         if (isRefresh) {
@@ -167,5 +171,13 @@ accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
 )
 
 /**
- * #TODO: 로그아웃 (로그아웃시 기존 access토큰 blacklist추가)
+ * info : 로그아웃
  */
+accountRouter.post<'/logout', unknown, unknown, TOKEN.TokenRequest>(
+  '/logout',
+  (req, res) => {
+    const { accessToken, refreshToken } = req.body
+
+    res.end()
+  }
+)
