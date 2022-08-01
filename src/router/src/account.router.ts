@@ -85,45 +85,48 @@ accountRouter.post<'/signup', unknown, unknown, CreateAccountType>(
 /**
  * info : 로그인
  */
-accountRouter.post<
-  '/signin',
-  unknown,
-  unknown,
-  Omit<CreateAccountType, 'name'>
->('/signin', async (req, res) => {
-  try {
-    const user = await signInCheck(req.body)
+accountRouter.post<'/login', unknown, unknown, Omit<CreateAccountType, 'name'>>(
+  '/login',
+  async (req, res) => {
+    try {
+      const user = await signInCheck(req.body)
 
-    const [accessToken, accessTokenExp] = TokenService.createAccessToken(
-      req.body.email,
-      user.name,
-      user.id
-    )
-    const [refreshToken, refreshTokenExp] = TokenService.createRefreshToken(
-      req.body.email,
-      user.name,
-      user.id,
-      accessToken
-    )
+      const [accessToken, accessTokenExp] = TokenService.createAccessToken(
+        req.body.email,
+        user.name,
+        user.id
+      )
+      const [refreshToken, refreshTokenExp] = TokenService.createRefreshToken(
+        req.body.email,
+        user.name,
+        user.id,
+        accessToken
+      )
 
-    await updateRefreshToken(user.id, refreshToken)
+      await updateRefreshToken(user.id, refreshToken)
 
-    const responseData = {
-      accessToken,
-      accessTokenExp,
-      refreshToken,
-      refreshTokenExp,
-      email: user.email,
-      name: user.name,
+      const responseData = {
+        accessToken,
+        accessTokenExp,
+        refreshToken,
+        refreshTokenExp,
+        email: user.email,
+        name: user.name,
+      }
+
+      res.send({
+        isLogin: true,
+        ...responseData,
+      })
+    } catch (error) {
+      console.error(error)
+      res.send({
+        isLogin: false,
+      })
     }
-
-    res.send(responseData)
-  } catch (error) {
-    console.error(error)
-    res.send(error)
+    res.end()
   }
-  res.end()
-})
+)
 
 /**
  * info : 페이지 접속시 토큰 체크
@@ -133,16 +136,21 @@ accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
   async (req, res) => {
     const { accessToken, refreshToken } = req.body
 
+    const isValid = await TokenService.tokenCheck(accessToken)
+
+    if (!isValid && refreshToken === undefined) {
+      res.send({
+        isLogin: false,
+      })
+    }
+
     try {
-      const isValid = await TokenService.tokenCheck(accessToken)
       // access 인증
       if (isValid) {
-        console.log('access true')
         res.send({
           isLogin: true,
         })
       } else {
-        console.log('access false')
         const isRefresh = await TokenService.refreshTokenCheck(refreshToken)
 
         if (isRefresh) {
@@ -167,5 +175,27 @@ accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
 )
 
 /**
- * #TODO: 로그아웃 (로그아웃시 기존 access토큰 blacklist추가)
+ * info : 로그아웃
  */
+accountRouter.post<'/logout', unknown, unknown, TOKEN.TokenRequest>(
+  '/logout',
+  async (req, res) => {
+    const { accessToken } = req.body
+
+    try {
+      const resetToken = await TokenService.resetToken(accessToken)
+      if (resetToken) {
+        res.send({
+          isLogin: false,
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      res.send({
+        isLogin: false,
+      })
+    }
+
+    res.end()
+  }
+)

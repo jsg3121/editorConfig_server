@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { createTokenExpDate, getEnvValue } from '../../common'
 import {
   tokenBlackListCheck,
-  createBlackList,
+  createBlackListToken,
   updateRefreshToken,
   validRefreshTokenCheck,
 } from '../../database'
@@ -25,6 +25,14 @@ const TOKEN_OPTIONS: {
   },
 }
 
+/**
+ * info : accessToken 생성
+ * @author 장선규 jsg3121
+ * @param email 회원 이메일
+ * @param name 회원 이름
+ * @param id 회원 번호
+ * @returns
+ */
 const createAccessToken = (
   email: CreateAccountType['email'],
   name: string,
@@ -36,6 +44,14 @@ const createAccessToken = (
   ]
 }
 
+/**
+ * info : refreshToken 생성
+ * @author 장선규 jsg3121
+ * @param email 회원 이메일
+ * @param name 회원 이름
+ * @param id 회원 번호
+ * @returns
+ */
 const createRefreshToken = (
   email: CreateAccountType['email'],
   name: string,
@@ -52,27 +68,44 @@ const createRefreshToken = (
   ]
 }
 
+/**
+ * info : 자동로그인을 위한 토큰 유효성 검사
+ * @author 장선규 jsg3121
+ * @param token 유효성 토큰 체크
+ * @returns
+ */
 const tokenCheck = async (token: string) => {
-  try {
-    const { iss, email } = <jwt.JwtPayload>jwt.verify(token, ACCESS_KEY)
+  const isBlackList = await tokenBlackListCheck(token)
 
-    const emailCheck = await tokenEmailCheck(email)
-    const issCheck = TOKEN_OPTIONS.access.issuer === iss ? true : false
+  if (isBlackList) {
+    try {
+      const { iss, email } = <jwt.JwtPayload>jwt.verify(token, ACCESS_KEY)
 
-    if (emailCheck && issCheck) {
-      return true
+      const emailCheck = await tokenEmailCheck(email)
+      const issCheck = TOKEN_OPTIONS.access.issuer === iss ? true : false
+
+      if (emailCheck && issCheck) {
+        return true
+      }
+    } catch (error) {
+      return false
     }
-  } catch (error) {
-    return false
   }
+  return false
 }
 
+/**
+ * info : refreshToken의 유효성 검사
+ * @author 장선규 jsg3121
+ * @param token refreshToken유효성 검사
+ * @returns
+ */
 const refreshTokenCheck = async (token: string) => {
   try {
     const { email, name, id, accessToken } = <jwt.JwtPayload>(
       jwt.verify(token, REFRESH_KEY)
     )
-    await createBlackList(accessToken)
+    await createBlackListToken(accessToken)
 
     const validRefreshToken = await validRefreshTokenCheck(token)
 
@@ -111,9 +144,22 @@ const refreshTokenCheck = async (token: string) => {
   }
 }
 
+/**
+ * info : 직접 로그아웃시 기존 accessToken 블랙리스트 추가
+ * @author 장선규 jsg3121
+ * @param accessToken accessToken
+ * @returns
+ */
+const resetToken = async (accessToken: string) => {
+  return await createBlackListToken(accessToken)
+    .then(() => true)
+    .catch((err) => err)
+}
+
 export const TokenService = {
   createAccessToken,
   createRefreshToken,
   tokenCheck,
   refreshTokenCheck,
+  resetToken,
 }
