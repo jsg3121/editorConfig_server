@@ -27,6 +27,17 @@ declare global {
     createAt: Date
     updateAt: Date
   }
+
+  type TokenBlackList = {
+    id: number
+    token: string
+  }
+
+  type RefreshTokenList = {
+    id: number
+    userId: number
+    token: string
+  }
 }
 
 export {}

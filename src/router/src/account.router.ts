@@ -1,5 +1,10 @@
 import { Router } from 'express'
-import { createAccount, signInCheck, validationEmail } from '../../database'
+import {
+  createAccount,
+  signInCheck,
+  updateRefreshToken,
+  validationEmail,
+} from '../../database'
 import { TokenService } from '../../service'
 import { TOKEN } from '../../types'
 
@@ -83,13 +88,17 @@ accountRouter.post<
 
     const [accessToken, accessTokenExp] = TokenService.createAccessToken(
       req.body.email,
-      user.name
+      user.name,
+      user.id
     )
     const [refreshToken, refreshTokenExp] = TokenService.createRefreshToken(
       req.body.email,
       user.name,
+      user.id,
       accessToken
     )
+
+    await updateRefreshToken(user.id, refreshToken)
 
     const responseData = {
       accessToken,
@@ -115,22 +124,24 @@ accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
 
     try {
       const isValid = await TokenService.tokenCheck(accessToken)
-      const isRefresh = await TokenService.refreshTokenCheck(refreshToken)
-
       // access 인증
       if (isValid) {
+        console.log('access true')
         res.send({
           isLogin: true,
         })
       } else {
-        if (!isValid && isRefresh) {
+        console.log('access false')
+        const isRefresh = await TokenService.refreshTokenCheck(refreshToken)
+
+        if (isRefresh) {
           res.send({
             isLogin: true,
             ...isRefresh,
           })
         }
 
-        if (!isValid && !isRefresh) {
+        if (!isRefresh) {
           res.send({
             isLogin: false,
           })
