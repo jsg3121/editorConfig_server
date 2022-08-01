@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
  * @param token 블랙리스트에 추가 될 토큰
  * @returns
  */
-export const createBlackList = async (token: string) => {
+export const createBlackListToken  = async (token: string) => {
   return await prisma.tokenBlackList.create({
     data: {
       token,

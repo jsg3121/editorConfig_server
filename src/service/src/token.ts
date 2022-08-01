@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { createTokenExpDate, getEnvValue } from '../../common'
 import {
   tokenBlackListCheck,
-  createBlackList,
+  createBlackListToken,
   updateRefreshToken,
   validRefreshTokenCheck,
 } from '../../database'
@@ -105,7 +105,7 @@ const refreshTokenCheck = async (token: string) => {
     const { email, name, id, accessToken } = <jwt.JwtPayload>(
       jwt.verify(token, REFRESH_KEY)
     )
-    await createBlackList(accessToken)
+    await createBlackListToken(accessToken)
 
     const validRefreshToken = await validRefreshTokenCheck(token)
 
@@ -144,9 +144,22 @@ const refreshTokenCheck = async (token: string) => {
   }
 }
 
+/**
+ * info : 직접 로그아웃시 기존 accessToken 블랙리스트 추가
+ * @author 장선규 jsg3121
+ * @param accessToken accessToken
+ * @returns
+ */
+const resetToken = async (accessToken: string) => {
+  return await createBlackListToken(accessToken)
+    .then(() => true)
+    .catch((err) => err)
+}
+
 export const TokenService = {
   createAccessToken,
   createRefreshToken,
   tokenCheck,
   refreshTokenCheck,
+  resetToken,
 }
