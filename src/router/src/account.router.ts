@@ -10,7 +10,9 @@ import { TOKEN } from '../../types'
 
 export const accountRouter = Router()
 
-// info : 이메일 체크
+/**
+ * info : 회원가입 이메일 중복체크
+ */
 accountRouter.get<
   '/valid/email',
   unknown,
@@ -36,7 +38,9 @@ accountRouter.get<
   res.end()
 })
 
-// info : 이름 체크
+/**
+ * info : 회원가입 이름 중복체크
+ */
 accountRouter.get<
   '/valid/name',
   unknown,
@@ -62,7 +66,9 @@ accountRouter.get<
   res.end()
 })
 
-// info : 회원가입
+/**
+ * info : 회원가입
+ */
 accountRouter.post<'/signup', unknown, unknown, CreateAccountType>(
   '/signup',
   async (req, res) => {
@@ -76,7 +82,9 @@ accountRouter.post<'/signup', unknown, unknown, CreateAccountType>(
   }
 )
 
-// info : 로그인
+/**
+ * info : 로그인
+ */
 accountRouter.post<
   '/signin',
   unknown,
@@ -117,6 +125,9 @@ accountRouter.post<
   res.end()
 })
 
+/**
+ * info : 페이지 접속시 토큰 체크
+ */
 accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
   '/tokencheck',
   async (req, res) => {
@@ -151,25 +162,10 @@ accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
       console.log('err')
     }
 
-    // if (isValid === false) {
-    //   if (isRefresh === false) {
-    //     res.send({
-    //       isLogin: false,
-    //     })
-    //   } else {
-    //     res.send({
-    //       isLogin: true,
-    //       ...isRefresh,
-    //     })
-    //   }
-    // } else {
-    //   res.send({
-    //     isLogin: true,
-    //   })
-    // }
-    // res.send({
-    //   isLogin: false,
-    // })
     res.end()
   }
 )
+
+/**
+ * #TODO: 로그아웃 (로그아웃시 기존 access토큰 blacklist추가)
+ */

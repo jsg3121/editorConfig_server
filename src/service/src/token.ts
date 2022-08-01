@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { createTokenExpDate, getEnvValue } from '../../common'
 import {
   tokenBlackListCheck,
-  updateBlackList,
+  createBlackList,
   updateRefreshToken,
   validRefreshTokenCheck,
 } from '../../database'
@@ -72,7 +72,7 @@ const refreshTokenCheck = async (token: string) => {
     const { email, name, id, accessToken } = <jwt.JwtPayload>(
       jwt.verify(token, REFRESH_KEY)
     )
-    await updateBlackList(id, accessToken)
+    await createBlackList(accessToken)
 
     const validRefreshToken = await validRefreshTokenCheck(token)
 
