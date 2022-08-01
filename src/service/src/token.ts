@@ -16,13 +16,11 @@ const TOKEN_OPTIONS: {
   refresh: jwt.SignOptions
 } = {
   access: {
-    // expiresIn: getEnvValue('JWT_ACCESS_EXP', '10d'),
-    expiresIn: '20s',
+    expiresIn: getEnvValue('JWT_ACCESS_EXP', '10d'),
     issuer: getEnvValue('JWT_ACCESS_ISSURE', ''),
   },
   refresh: {
-    expiresIn: '60s',
-    // expiresIn: getEnvValue('JWT_REFRESH_EXP', '30d'),
+    expiresIn: getEnvValue('JWT_REFRESH_EXP', '30d'),
     issuer: getEnvValue('JWT_REFRESH_ISSURE', ''),
   },
 }
