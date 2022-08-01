@@ -114,10 +114,15 @@ accountRouter.post<'/login', unknown, unknown, Omit<CreateAccountType, 'name'>>(
         name: user.name,
       }
 
-      res.send(responseData)
+      res.send({
+        isLogin: true,
+        ...responseData,
+      })
     } catch (error) {
       console.error(error)
-      res.send(error)
+      res.send({
+        isLogin: false,
+      })
     }
     res.end()
   }
