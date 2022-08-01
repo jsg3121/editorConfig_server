@@ -1,13 +1,37 @@
 import { PrismaClient } from '@prisma/client'
+import express from 'express'
+import { accountRouter } from '../../router'
 
 const prisma = new PrismaClient()
 
+const init = {
+  schema: true,
+}
+
+const initCheck = async () => {
+  if (init.schema === false) {
+    await prisma.user.create({
+      data: {
+        email: 'admin@master.com',
+        name: 'admin',
+        password: 'admin',
+      },
+    })
+  }
+}
+
 export const runServer = async () => {
-  await prisma.user.create({
-    data: {
-      email: 'admin@master.com',
-      name: 'admin',
-      password: 'admin',
-    },
+  const app = express()
+  const PORT = process.env.PORT || 4000
+
+  initCheck()
+
+  app.use(express.urlencoded({ extended: true }))
+  app.use(express.json())
+  app.use('/api/account', accountRouter)
+
+  app.listen(PORT, () => {
+    console.log(PORT)
+    console.log('server running...')
   })
 }

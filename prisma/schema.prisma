@@ -11,12 +11,13 @@ datasource db {
 }
 
 model User {
-  id          Int           @id @default(autoincrement()) // user 번호
-  name        String        @map("user_name") @db.VarChar(20) // 사용자 이름
-  email       String        @map("user_email") @db.VarChar(255) // 사용자 이메일(로그인 id)
-  password    String        @map("user_password") @db.VarChar(255) // 사용자 패스워드 (암호확)
-  createAt    DateTime      @default(now()) @map("create_at")
-  settingList SettingList[]
+  id               Int               @id @default(autoincrement()) // user 번호
+  name             String            @unique @map("user_name") @db.VarChar(20) // 사용자 이름
+  email            String            @unique @map("user_email") @db.VarChar(50) // 사용자 이메일(로그인 id)
+  password         String            @map("user_password") @db.VarChar(100) // 사용자 패스워드 (암호확)
+  createAt         DateTime          @default(now()) @map("create_at")
+  settingList      SettingList[]
+  refreshTokenList RefreshTokenList?
 
   @@map("user_info")
 }
@@ -31,4 +32,21 @@ model SettingList {
   updateAt     DateTime @map("update_at") // 수정일
 
   @@map("setting_list")
+}
+
+model TokenBlackList {
+  id    Int    @id @default(autoincrement())
+  token String @map("token") @db.Text
+
+  @@map("token_balcklist")
+}
+
+model RefreshTokenList {
+  id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int      @unique @map("user_id")
+  refreshToken String   @map("refresh_token") @db.Text
+  createAt     DateTime @default(now()) @map("create_at") // 생성일
+
+  @@map("refresh_token_list")
 }
