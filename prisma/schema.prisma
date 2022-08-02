@@ -23,13 +23,14 @@ model User {
 }
 
 model SettingList {
-  id           Int      @id @default(autoincrement()) // 설정 리스트 저장 번호
-  user         User     @relation(fields: [userId], references: [id])
-  userId       Int      @map("user_id") // 등록한 사용자 번호
-  configType   String   @map("config_type") @db.VarChar(50) // 설정한 파일 대응 언어 타입
-  configDetail String   @map("config_detail") @db.Text // 설정 내용
-  createAt     DateTime @default(now()) @map("create_at") // 생성일
-  updateAt     DateTime @map("update_at") // 수정일
+  id           Int       @id @default(autoincrement()) // 설정 리스트 저장 번호
+  user         User      @relation(fields: [userId], references: [id])
+  userId       Int       @map("user_id") // 등록한 사용자 번호
+  configName   String    @map("config_name") @db.VarChar(50) // 설정한 파일 세팅 이름
+  configType   String    @map("config_type") @db.VarChar(50) // 설정한 파일 대응 언어 타입
+  configDetail String    @map("config_detail") @db.Text // 설정 내용
+  createAt     DateTime  @default(now()) @map("create_at") // 생성일
+  updateAt     DateTime? @map("update_at") // 수정일
 
   @@map("setting_list")
 }

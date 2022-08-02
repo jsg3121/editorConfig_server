@@ -7,6 +7,7 @@ import {
   validRefreshTokenCheck,
 } from '../../database'
 import { tokenEmailCheck } from '../../database/src/account'
+import { Types } from '../../types'
 
 const ACCESS_KEY = getEnvValue('JWT_ACCESS_PRIVATE_KEY', '')
 const REFRESH_KEY = getEnvValue('JWT_REFRESH_PRIVATE_KEY', '')
@@ -69,7 +70,7 @@ const createRefreshToken = (
 }
 
 /**
- * info : 자동로그인을 위한 토큰 유효성 검사
+ * info : 토큰 유효성 검사
  * @author 장선규 jsg3121
  * @param token 유효성 토큰 체크
  * @returns
@@ -156,10 +157,38 @@ const resetToken = async (accessToken: string) => {
     .catch((err) => err)
 }
 
+/**
+ * info : config API요청시 담겨오는 header내 토큰체크
+ * @author 장선규 jsg3121
+ * @param val client에서 전송된 headers.authorization
+ * @returns
+ */
+const headerTokenCheck = async (val: string) => {
+  const token = val.split(' ')[1]
+
+  try {
+    const { iss, email } = <jwt.JwtPayload>jwt.verify(token, ACCESS_KEY)
+
+    const emailCheck = await tokenEmailCheck(email)
+    const issCheck = TOKEN_OPTIONS.access.issuer === iss ? true : false
+
+    if (emailCheck && issCheck) {
+      return true
+    }
+    return false
+  } catch (error) {
+    throw {
+      code: Types.APIRespose.UNAUTHORIZED,
+      description: '권한이 없는 사용자 입니다.',
+    }
+  }
+}
+
 export const TokenService = {
   createAccessToken,
   createRefreshToken,
   tokenCheck,
   refreshTokenCheck,
   resetToken,
+  headerTokenCheck,
 }
