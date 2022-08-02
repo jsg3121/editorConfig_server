@@ -57,9 +57,21 @@ configRouter.get<'/file', unknown, unknown, ConfigRequest.GET>(
 /**
  * info : config 파일 수정
  */
-configRouter.patch<'/file', unknown, unknown, any>('/file', (req, res) => {
-  console.log('patch')
-})
+configRouter.patch<'/file', unknown, unknown, ConfigRequest.PATCH>(
+  '/file',
+  async (req, res) => {
+    try {
+      await requestTokenCheck(req.headers)
+
+      await ConfigService.updateConfig(req.body)
+    } catch (error) {
+      console.log(error)
+      res.send(error)
+    }
+
+    res.end()
+  }
+)
 
 /**
  * info : config 파일 삭제

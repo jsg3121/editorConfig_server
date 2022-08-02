@@ -1,4 +1,8 @@
-import { createConfigSetting, findConfigList } from '../../database'
+import {
+  createConfigSetting,
+  findConfigList,
+  updateConfigSetting,
+} from '../../database'
 import { ConfigRequest, Types } from '../../types'
 
 const createConfig = async (value: ConfigRequest.POST) => {
@@ -28,7 +32,23 @@ const getConfigList = async (id: string) => {
     })
 }
 
+const updateConfig = async (data: ConfigRequest.PATCH) => {
+  return await updateConfigSetting(data)
+    .then((res) => {
+      console.log(res)
+      return { code: Types.APIRespose.SUCCESS, description: '수정되었습니다.' }
+    })
+    .catch((err) => {
+      console.log(err)
+      return {
+        code: Types.APIRespose.SERVER_ERROR,
+        description: '수정에 실패하였습니다.',
+      }
+    })
+}
+
 export const ConfigService = {
   createConfig,
   getConfigList,
+  updateConfig,
 }

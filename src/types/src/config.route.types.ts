@@ -10,3 +10,9 @@ export type POST = {
 export type GET = {
   userId: string
 }
+
+export type PATCH = {
+  userId: string
+  configName: string
+  value: string
+}
