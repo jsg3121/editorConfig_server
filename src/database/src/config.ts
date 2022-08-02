@@ -15,3 +15,11 @@ export const createConfigSetting = async (data: ConfigRequest.POST) => {
     },
   })
 }
+
+export const findConfigList = async (id: number) => {
+  return await prisma.settingList.findMany({
+    where: {
+      userId: id,
+    },
+  })
+}

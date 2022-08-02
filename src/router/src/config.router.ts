@@ -10,13 +10,6 @@ export const configRouter = Router()
 /**
  * info : config 파일 생성
  */
-
-configRouter.all('/file', async (req, res) => {
-  const { authorization = '' } = req.headers
-
-  res.end()
-})
-
 configRouter.post<'/file', unknown, unknown, ConfigRequest.POST>(
   '/file',
   async (req, res) => {
@@ -45,11 +38,21 @@ configRouter.post<'/file', unknown, unknown, ConfigRequest.POST>(
 /**
  * info : config 파일 가져오기
  */
-configRouter.get<'/file', unknown, unknown, any>('/file', (req, res) => {
-  // db에 저장된 파일이 존재하면 해당 파일 불러옴
-  // 저장된 파일이 없다면 새로 생성하는 페이지로 이동
-  console.log('get')
-})
+configRouter.get<'/file', unknown, unknown, ConfigRequest.GET>(
+  '/file',
+  async (req, res) => {
+    try {
+      await requestTokenCheck(req.headers)
+
+      const data = await ConfigService.getConfigList(req.body.userId)
+
+      res.send(data)
+    } catch (error) {
+      res.send(error)
+    }
+    res.end()
+  }
+)
 
 /**
  * info : config 파일 수정

@@ -6,3 +6,7 @@ export type POST = {
   configName: string
   value: string
 }
+
+export type GET = {
+  userId: string
+}

@@ -1,4 +1,4 @@
-import { createConfigSetting } from '../../database'
+import { createConfigSetting, findConfigList } from '../../database'
 import { ConfigRequest, Types } from '../../types'
 
 const createConfig = async (value: ConfigRequest.POST) => {
@@ -17,6 +17,18 @@ const createConfig = async (value: ConfigRequest.POST) => {
     })
 }
 
+const getConfigList = async (id: string) => {
+  return await findConfigList(parseInt(id, 10))
+    .then((res) => {
+      return { code: Types.APIRespose.SUCCESS, data: res }
+    })
+    .catch((err) => {
+      console.log(err)
+      return { code: Types.APIRespose.NO_CONTENT, data: [] }
+    })
+}
+
 export const ConfigService = {
   createConfig,
+  getConfigList,
 }
