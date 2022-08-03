@@ -78,7 +78,7 @@ configRouter.patch<'/file', unknown, unknown, ConfigRequest.PATCH>(
 /**
  * info : config 파일 삭제
  */
-configRouter.delete<'/file', unknown, unknown, any>(
+configRouter.delete<'/file', unknown, unknown, ConfigRequest.DELETE>(
   '/file',
   async (req, res) => {
     try {
