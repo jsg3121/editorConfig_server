@@ -39,3 +39,15 @@ export const updateConfigSetting = async (patchData: ConfigRequest.PATCH) => {
     },
   })
 }
+
+export const deleteConfigSetting = async (deleteData: ConfigRequest.DELETE) => {
+  const { configName, userId, id } = deleteData
+
+  return await prisma.settingList.deleteMany({
+    where: {
+      id: parseInt(id, 10),
+      userId: parseInt(userId, 10),
+      configName,
+    },
+  })
+}

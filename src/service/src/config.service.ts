@@ -1,5 +1,6 @@
 import {
   createConfigSetting,
+  deleteConfigSetting,
   findConfigList,
   updateConfigSetting,
 } from '../../database'
@@ -47,8 +48,23 @@ const updateConfig = async (data: ConfigRequest.PATCH) => {
     })
 }
 
+const deleteConfig = async (data: ConfigRequest.DELETE) => {
+  return await deleteConfigSetting(data)
+    .then(() => {
+      return { code: Types.APIRespose.SUCCESS, description: '삭제되었습니다.' }
+    })
+    .catch((err) => {
+      console.log(err)
+      return {
+        code: Types.APIRespose.SERVER_ERROR,
+        description: '삭제에 실패하였습니다.',
+      }
+    })
+}
+
 export const ConfigService = {
   createConfig,
   getConfigList,
   updateConfig,
+  deleteConfig,
 }

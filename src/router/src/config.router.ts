@@ -63,7 +63,9 @@ configRouter.patch<'/file', unknown, unknown, ConfigRequest.PATCH>(
     try {
       await requestTokenCheck(req.headers)
 
-      await ConfigService.updateConfig(req.body)
+      const patch = await ConfigService.updateConfig(req.body)
+
+      res.send(patch)
     } catch (error) {
       console.log(error)
       res.send(error)
@@ -76,6 +78,20 @@ configRouter.patch<'/file', unknown, unknown, ConfigRequest.PATCH>(
 /**
  * info : config 파일 삭제
  */
-configRouter.delete<'/file', unknown, unknown, any>('/file', (req, res) => {
-  console.log('delete')
-})
+configRouter.delete<'/file', unknown, unknown, any>(
+  '/file',
+  async (req, res) => {
+    try {
+      await requestTokenCheck(req.headers)
+
+      const deleteCofig = await ConfigService.deleteConfig(req.body)
+
+      res.send(deleteCofig)
+    } catch (error) {
+      console.log(error)
+      res.send(error)
+    }
+
+    res.end()
+  }
+)

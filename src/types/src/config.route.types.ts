@@ -16,3 +16,9 @@ export type PATCH = {
   configName: string
   value: string
 }
+
+export type DELETE = {
+  userId: string
+  id: string
+  configName: string
+}
