@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import express from 'express'
-import { accountRouter } from '../../router'
+import { accountRouter, configRouter } from '../../router'
 
 const prisma = new PrismaClient()
 
@@ -29,6 +29,7 @@ export const runServer = async () => {
   app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
   app.use('/api/account', accountRouter)
+  app.use('/api/config', configRouter)
 
   app.listen(PORT, () => {
     console.log(PORT)

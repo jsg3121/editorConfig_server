@@ -113,19 +113,22 @@ export const signInCheck = async (
  * info : 토큰 데이터 내 이메일 유효화 체크
  * @author 장선규 jsg3121
  * @param email 이메일
- * @returns {boolean}
+ * @returns
  */
 export const tokenEmailCheck = async (email: string) => {
-  const check = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  })
-
-  if (check === null || check === undefined) {
-    return false
-  }
-  return true
+  return await prisma.user
+    .findUnique({
+      where: {
+        email,
+      },
+    })
+    .then(() => {
+      return true
+    })
+    .catch((err) => {
+      console.log(err)
+      return false
+    })
 }
 
 // export const updateAccount = async (data: UpdateAccountType) => {
