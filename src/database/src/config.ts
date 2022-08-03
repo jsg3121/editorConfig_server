@@ -1,11 +1,16 @@
 import { PrismaClient } from '@prisma/client'
 import { ConfigRequest } from '../../types'
-import { IPrettier } from '../../types/src/config.types'
 
 const prisma = new PrismaClient()
 
-export const createConfigSetting = async (data: ConfigRequest.POST) => {
-  const { type, value, userId, configName } = data
+/**
+ * info : create config setting
+ * @author 장선규 jsg3121
+ * @param createData
+ * @returns
+ */
+export const createConfigSetting = async (createData: ConfigRequest.POST) => {
+  const { type, value, userId, configName } = createData
 
   return await prisma.settingList.create({
     data: {
@@ -17,14 +22,28 @@ export const createConfigSetting = async (data: ConfigRequest.POST) => {
   })
 }
 
-export const findConfigList = async (id: number) => {
+/**
+ * info : get all config setting list
+ * @author 장선규 jsg3121
+ * @param getData
+ * @returns
+ */
+export const findConfigList = async (getData: ConfigRequest.GET) => {
+  const { userId } = getData
+
   return await prisma.settingList.findMany({
     where: {
-      userId: id,
+      userId: parseInt(userId, 10),
     },
   })
 }
 
+/**
+ * info : update select config setting
+ * @author 장선규 jsg3121
+ * @param patchData
+ * @returns
+ */
 export const updateConfigSetting = async (patchData: ConfigRequest.PATCH) => {
   const { userId, value, configName } = patchData
 
@@ -40,6 +59,12 @@ export const updateConfigSetting = async (patchData: ConfigRequest.PATCH) => {
   })
 }
 
+/**
+ * info : delete config setting
+ * @author 장선규 jsg3121
+ * @param deleteData
+ * @returns
+ */
 export const deleteConfigSetting = async (deleteData: ConfigRequest.DELETE) => {
   const { configName, userId, id } = deleteData
 

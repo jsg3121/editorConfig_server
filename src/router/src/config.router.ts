@@ -44,7 +44,7 @@ configRouter.get<'/file', unknown, unknown, ConfigRequest.GET>(
     try {
       await requestTokenCheck(req.headers)
 
-      const data = await ConfigService.getConfigList(req.body.userId)
+      const data = await ConfigService.getConfigList(req.body)
 
       res.send(data)
     } catch (error) {
