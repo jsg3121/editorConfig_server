@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import cors from 'cors'
 import express from 'express'
 import { accountRouter, configRouter } from '../../router'
 
@@ -26,6 +27,7 @@ export const runServer = async () => {
 
   initCheck()
 
+  app.use(cors())
   app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
   app.use('/api/account', accountRouter)
