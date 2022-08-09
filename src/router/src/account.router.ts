@@ -113,7 +113,6 @@ accountRouter.post<'/login', unknown, unknown, Omit<CreateAccountType, 'name'>>(
         email: user.email,
         name: user.name,
       }
-
       res.send({
         isLogin: true,
         ...responseData,
