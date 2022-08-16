@@ -38,6 +38,12 @@ declare global {
     userId: number
     token: string
   }
+
+  type ResponseData<T = {}> = {
+    status: number
+    description: string
+    result?: T
+  }
 }
 
 export {}

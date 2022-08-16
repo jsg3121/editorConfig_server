@@ -52,11 +52,11 @@ export const validationName = async (
  * info : 회원가입 중복체크
  * @author 장선규 jsg3121
  * @param {CreateAccountType} data 회원가입 입력 정보
- * @returns {Promise<{code: number, description: string}>}
+ * @returns {Promise<ResponseData>}
  */
 export const createAccount = async (
   data: CreateAccountType
-): Promise<{ code: number; description: string }> => {
+): Promise<ResponseData> => {
   const signUp = {
     email: data.email,
     name: data.name,
@@ -68,10 +68,13 @@ export const createAccount = async (
       data: signUp,
     })
     .then(() => {
-      return { code: 200, description: 'Sign Up Success' }
+      return {
+        status: Types.APIRespose.SUCCESS,
+        description: 'Sign Up Success',
+      }
     })
     .catch((err) => {
-      return { code: 400, description: err }
+      return { status: Types.APIRespose.BAD_REQUEST, description: err }
     })
 
   return result
@@ -81,11 +84,11 @@ export const createAccount = async (
  * info : 로그인 체크
  * @author 장선규 jsg3121
  * @param {CreateAccountType} data 로그인 입력 정보
- * @returns {Promise<User>}
+ * @returns {Promise<ResponseData<User>>}
  */
 export const signInCheck = async (
   data: Omit<CreateAccountType, 'name'>
-): Promise<User> => {
+): Promise<ResponseData<User>> => {
   const user = await prisma.user.findUnique({
     where: {
       email: data.email,
@@ -94,18 +97,22 @@ export const signInCheck = async (
 
   if (user === null) {
     return Promise.reject({
-      status: Types.ErrorResponse.SignIn,
+      status: Types.APIRespose.UNAUTHORIZED,
       description: '일치하는 계정이 존재하지 않습니다.',
     })
   } else {
     const isValid = bcrypt.compareSync(data.password, user.password)
     if (!isValid) {
       return Promise.reject({
-        status: Types.ErrorResponse.SignIn,
+        status: Types.APIRespose.UNAUTHORIZED,
         description: '일치하는 계정이 존재하지 않습니다.',
       })
     }
-    return user
+    return {
+      status: Types.APIRespose.SUCCESS,
+      description: 'Login Success',
+      result: user,
+    }
   }
 }
 

@@ -178,7 +178,15 @@ model RefreshTokenList {
 | accessToken  | `string` | accessToken  |
 | refreshToken | `string` | refreshToken |
 
-- Response - success
+- Response - success (accessToken)
+
+| **key** | **type**  | **비고**                      |
+| ------- | --------- | ----------------------------- |
+| isLogin | `boolean` | 로그인 결과(default : `true`) |
+| email   | `string`  | 로그인 계정 이메일            |
+| name    | `string`  | 로그인 계정 이름              |
+
+- Response - success (refreshToken)
 
 | **key**            | **type**  | **비고**                      |
 | ------------------ | --------- | ----------------------------- |

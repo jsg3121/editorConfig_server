@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { decryptToken } from '../../common'
 import {
   createAccount,
   signInCheck,
@@ -89,38 +90,46 @@ accountRouter.post<'/login', unknown, unknown, Omit<CreateAccountType, 'name'>>(
   '/login',
   async (req, res) => {
     try {
-      const user = await signInCheck(req.body)
+      const { result, status, description } = await signInCheck(req.body)
 
-      const [accessToken, accessTokenExp] = TokenService.createAccessToken(
-        req.body.email,
-        user.name,
-        user.id
-      )
-      const [refreshToken, refreshTokenExp] = TokenService.createRefreshToken(
-        req.body.email,
-        user.name,
-        user.id,
-        accessToken
-      )
+      if (result) {
+        const [accessToken, accessTokenExp] = TokenService.createAccessToken(
+          req.body.email,
+          result.name,
+          result.id
+        )
+        const [refreshToken, refreshTokenExp] = TokenService.createRefreshToken(
+          req.body.email,
+          result.name,
+          result.id,
+          accessToken
+        )
 
-      await updateRefreshToken(user.id, refreshToken)
+        await updateRefreshToken(result.id, refreshToken)
 
-      const responseData = {
-        accessToken,
-        accessTokenExp,
-        refreshToken,
-        refreshTokenExp,
-        email: user.email,
-        name: user.name,
+        const responseData = {
+          accessToken,
+          accessTokenExp,
+          refreshToken,
+          refreshTokenExp,
+          email: result.email,
+          name: result.name,
+        }
+        res.send({
+          status,
+          description,
+          data: {
+            isLogin: true,
+            ...responseData,
+          },
+        })
       }
-      res.send({
-        isLogin: true,
-        ...responseData,
-      })
     } catch (error) {
-      console.error(error)
       res.send({
-        isLogin: false,
+        data: {
+          isLogin: false,
+        },
+        ...(error as ResponseData),
       })
     }
     res.end()
@@ -147,15 +156,24 @@ accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
       // access 인증
       if (isValid) {
         res.send({
-          isLogin: true,
+          status: isValid.status,
+          description: isValid.description,
+          data: {
+            isLogin: true,
+            ...isValid.data,
+          },
         })
       } else {
         const isRefresh = await TokenService.refreshTokenCheck(refreshToken)
 
         if (isRefresh) {
           res.send({
-            isLogin: true,
-            ...isRefresh,
+            status: isRefresh.status,
+            description: isRefresh.description,
+            data: {
+              isLogin: true,
+              ...isRefresh.data,
+            },
           })
         }
 
@@ -180,9 +198,10 @@ accountRouter.post<'/logout', unknown, unknown, TOKEN.TokenRequest>(
   '/logout',
   async (req, res) => {
     const { accessToken } = req.body
+    const { accessToken: token } = decryptToken(accessToken)
 
     try {
-      const resetToken = await TokenService.resetToken(accessToken)
+      const resetToken = await TokenService.resetToken(token)
       if (resetToken) {
         res.send({
           isLogin: false,

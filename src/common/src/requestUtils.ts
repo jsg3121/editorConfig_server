@@ -1,6 +1,12 @@
 import { TokenService } from '../../service'
 import { Types } from '../../types'
 
+/**
+ * info : API요청시 헤더 토큰 정보 체크
+ * @author 장선규 jsg3121
+ * @param headers 토큰 정보
+ * @returns
+ */
 export const requestTokenCheck = async (headers: {
   authorization?: string
 }) => {

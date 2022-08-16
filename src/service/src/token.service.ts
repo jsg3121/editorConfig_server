@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { createTokenExpDate, getEnvValue } from '../../common'
+import { createTokenExpDate, decryptToken, getEnvValue } from '../../common'
 import {
   tokenBlackListCheck,
   createBlackListToken,
@@ -72,21 +72,29 @@ const createRefreshToken = (
 /**
  * info : 토큰 유효성 검사
  * @author 장선규 jsg3121
- * @param token 유효성 토큰 체크
+ * @param accessToken 유효성 토큰 체크
  * @returns
  */
-const tokenCheck = async (token: string) => {
+const tokenCheck = async (accessToken: string) => {
+  const { accessToken: token } = decryptToken(accessToken)
   const isBlackList = await tokenBlackListCheck(token)
 
   if (isBlackList) {
     try {
-      const { iss, email } = <jwt.JwtPayload>jwt.verify(token, ACCESS_KEY)
+      const { iss, email, name } = <jwt.JwtPayload>jwt.verify(token, ACCESS_KEY)
 
       const emailCheck = await tokenEmailCheck(email)
       const issCheck = TOKEN_OPTIONS.access.issuer === iss ? true : false
 
       if (emailCheck && issCheck) {
-        return true
+        return {
+          status: Types.APIRespose.SUCCESS,
+          description: 'check success',
+          data: {
+            email,
+            name,
+          },
+        }
       }
     } catch (error) {
       return false
@@ -98,10 +106,12 @@ const tokenCheck = async (token: string) => {
 /**
  * info : refreshToken의 유효성 검사
  * @author 장선규 jsg3121
- * @param token refreshToken유효성 검사
+ * @param refreshToken refreshToken유효성 검사
  * @returns
  */
-const refreshTokenCheck = async (token: string) => {
+const refreshTokenCheck = async (refreshToken: string) => {
+  const { refreshToken: token } = decryptToken(refreshToken)
+
   try {
     const { email, name, id, accessToken } = <jwt.JwtPayload>(
       jwt.verify(token, REFRESH_KEY)
@@ -127,12 +137,16 @@ const refreshTokenCheck = async (token: string) => {
       console.log('refresh check true')
 
       return {
-        newAccessToken,
-        newAccessTokenExp,
-        newRefreshToken,
-        newRefreshTokenExp,
-        email,
-        name,
+        status: Types.APIRespose.SUCCESS,
+        description: 'refresh success',
+        data: {
+          newAccessToken,
+          newAccessTokenExp,
+          newRefreshToken,
+          newRefreshTokenExp,
+          email,
+          name,
+        },
       }
     }
 
