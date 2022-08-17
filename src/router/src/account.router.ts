@@ -86,7 +86,7 @@ accountRouter.post<'/signup', unknown, unknown, CreateAccountType>(
 /**
  * info : 로그인
  */
-accountRouter.post<'/login', unknown, unknown, Omit<CreateAccountType, 'name'>>(
+accountRouter.post<'/login', unknown, unknown, LoginRequestForm>(
   '/login',
   async (req, res) => {
     try {
@@ -179,12 +179,18 @@ accountRouter.post<'/tokencheck', unknown, unknown, TOKEN.TokenRequest>(
 
         if (!isRefresh) {
           res.send({
-            isLogin: false,
+            data: {
+              isLogin: false,
+            },
           })
         }
       }
     } catch (err) {
-      console.log('err')
+      res.send({
+        data: {
+          isLogin: false,
+        },
+      })
     }
 
     res.end()
@@ -198,10 +204,9 @@ accountRouter.post<'/logout', unknown, unknown, TOKEN.TokenRequest>(
   '/logout',
   async (req, res) => {
     const { accessToken } = req.body
-    const { accessToken: token } = decryptToken(accessToken)
 
     try {
-      const resetToken = await TokenService.resetToken(token)
+      const resetToken = await TokenService.resetToken(accessToken)
       if (resetToken) {
         res.send({
           isLogin: false,

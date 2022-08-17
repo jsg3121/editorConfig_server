@@ -6,6 +6,5 @@ export const decryptToken = (token: string) => {
     token,
     getEnvValue('CRYPTO_SECRET_KEY', '')
   ).toString(CryptoJs.enc.Utf8)
-
   return JSON.parse(decrypt)
 }

@@ -83,11 +83,11 @@ export const createAccount = async (
 /**
  * info : 로그인 체크
  * @author 장선규 jsg3121
- * @param {CreateAccountType} data 로그인 입력 정보
+ * @param {LoginRequestForm} data 로그인 입력 정보
  * @returns {Promise<ResponseData<User>>}
  */
 export const signInCheck = async (
-  data: Omit<CreateAccountType, 'name'>
+  data: LoginRequestForm
 ): Promise<ResponseData<User>> => {
   const user = await prisma.user.findUnique({
     where: {

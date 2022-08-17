@@ -44,6 +44,12 @@ declare global {
     description: string
     result?: T
   }
+
+  type LoginRequestForm = {
+    email: string
+    password: string
+    isAutoLogin: boolean
+  }
 }
 
 export {}
