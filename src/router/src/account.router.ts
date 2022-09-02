@@ -5,16 +5,17 @@ import {
   signInCheck,
   updateRefreshToken,
   validationEmail,
+  validationName,
 } from '../../database'
 import { TokenService } from '../../service'
-import { TOKEN } from '../../types'
+import { TOKEN, Types } from '../../types'
 
 export const accountRouter = Router()
 
 /**
  * info : 회원가입 이메일 중복체크
  */
-accountRouter.get<
+accountRouter.post<
   '/valid/email',
   unknown,
   unknown,
@@ -24,12 +25,12 @@ accountRouter.get<
     const isCheck = await validationEmail(req.body.email)
     if (isCheck) {
       res.send({
-        status: 'success',
+        status: Types.APIRespose.SUCCESS,
         description: '사용 가능한 계정입니다.',
       })
     } else {
       res.send({
-        status: 'error',
+        status: Types.APIRespose.BAD_REQUEST,
         description: '중복된 계정이 존재합니다.',
       })
     }
@@ -42,22 +43,22 @@ accountRouter.get<
 /**
  * info : 회원가입 이름 중복체크
  */
-accountRouter.get<
+accountRouter.post<
   '/valid/name',
   unknown,
   unknown,
   Pick<CreateAccountType, 'name'>
 >('/valid/name', async (req, res) => {
   try {
-    const isCheck = await validationEmail(req.body.name)
+    const isCheck = await validationName(req.body.name)
     if (isCheck) {
       res.send({
-        status: 'success',
+        status: Types.APIRespose.SUCCESS,
         description: '사용 가능한 이름입니다.',
       })
     } else {
       res.send({
-        status: 'error',
+        status: Types.APIRespose.BAD_REQUEST,
         description: '중복된 이름이 존재합니다.',
       })
     }
