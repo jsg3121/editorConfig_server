@@ -1,4 +1,4 @@
-export const Prettier = {
+const Prettier = {
   Options: {
     arrowParens: 'avoid',
     bracketSpacing: false,
@@ -19,6 +19,7 @@ export const Prettier = {
   Description: {
     arrowParens: {
       desc: `화살표 함수 괄호 사용 방식을 지정합니다 `,
+      type: 'select',
       value: {
         always: '(x) => x',
         avoid: 'x => x',
@@ -26,6 +27,7 @@ export const Prettier = {
     },
     bracketSpacing: {
       desc: '객체 리터럴에서 괄호에 공백 삽입 여부',
+      type: 'boolean',
       value: {
         true: '{ foo: bar }',
         false: '{foo: bar}',
@@ -33,15 +35,17 @@ export const Prettier = {
     },
     endOfLine: {
       desc: 'EoF 방식, OS별로 처리 방식이 다름',
+      type: 'select',
       value: {
         lf: 'Linux, MacOS에서 공통으로 사용되며 줄바꿈만 사용합니다.',
         crlf: 'Window에서 공통으로 사용하며 캐리지 리턴과 줄바꿈 모두 사용합니다.',
-        cr: '캐리지 리던문자만 사용합니다.',
+        cr: '캐리지 리턴문자만 사용합니다.',
         auto: '기존 줄 끝을 유지합니다',
       },
     },
     htmlWhitespaceSensitivity: {
       desc: `HTML의 인라인 요소 공백을 인식합니다`,
+      type: 'select',
       value: {
         css: 'css display속성에 따라 포맷팅 됩니다.',
         strict: '모든 공백을 인라인 요소처럼 포맷합니다.',
@@ -50,6 +54,7 @@ export const Prettier = {
     },
     jsxBracketSameLine: {
       desc: 'JSX의 마지막 `>`를 다음 줄로 내릴지 여부',
+      type: 'boolean',
       value: {
         true: `
           <button
@@ -72,9 +77,11 @@ export const Prettier = {
     },
     jsxSingleQuote: {
       desc: 'JSX에 single 쿼테이션 사용 여부',
+      type: 'boolean',
     },
     printWidth: {
       desc: '줄 바꿈 할 폭 길이',
+      type: 'number',
       value: `
             가독성을 위한 Prettier의 적정 권고 길이는 80입니다
             https://prettier.io/docs/en/options.html#print-width
@@ -82,6 +89,7 @@ export const Prettier = {
     },
     proseWrap: {
       desc: 'markdown 텍스트의 줄바꿈 방식을 설정합니다 (v1.8.2이상 사용가능)',
+      type: 'select',
       value: {
         always: '너비를 초과하는 경우 줄바꿈을 실행합니다.',
         never: '문장 블록에 따라 줄바꿈을 실행합니다.',
@@ -91,6 +99,7 @@ export const Prettier = {
     },
     quoteProps: {
       desc: '객체 속성에 key의 쿼테이션 적용 방식을 설정합니다',
+      type: 'select',
       value: {
         'as-needed': `
           quote를 감싸지 않으면 안되는 문자("-")등이 있으면 해당 key name을 제외하고 모든 qoute를 제거합니다.
@@ -117,15 +126,19 @@ export const Prettier = {
     },
     semi: {
       desc: '세미콜론 사용 여부를 설정합니다.',
+      type: 'boolean',
     },
     singleQuote: {
       desc: 'single 쿼테이션 사용 여부를 설정합니다.',
+      type: 'boolean',
     },
     tabWidth: {
       desc: '탭 너비를 설정합니다. 1 => 띄어쓰기 한 번의 공백',
+      type: 'number',
     },
     trailingComma: {
       desc: '여러 줄을 사용할 때 후행 콤마 사용 방식을 설정합니다.',
+      type: 'select',
       value: {
         es5: '유효한 곳에서 허용하돌록 설정합니다. 타입스크립트의 함수 파라미터에는 허용되지 않습니다.',
         none: '모든 곳에서 허용하지 않습니다.',
@@ -134,9 +147,11 @@ export const Prettier = {
     },
     useTabs: {
       desc: 'tab 키를 사용하여 들여쓰기 여부를 설정합니다.',
+      type: 'boolean',
     },
     vueIndentScriptAndStyle: {
       desc: 'Vue 파일의 script와 style 태그의 들여쓰기 여부를 지정합니다. (v1.19.0이상 사용가능)',
+      type: 'boolean',
       value: {
         true: `
           <script>
@@ -170,3 +185,5 @@ export const Prettier = {
     },
   },
 }
+
+export default Prettier

@@ -10,16 +10,20 @@ const prisma = new PrismaClient()
  * @returns
  */
 export const createConfigSetting = async (createData: ConfigRequest.POST) => {
-  const { type, value, userId, configName } = createData
+  const { configType, configDetail, userId, configName } = createData
 
-  return await prisma.settingList.create({
-    data: {
-      userId: parseInt(userId, 10),
-      configDetail: JSON.stringify(value),
-      configName,
-      configType: type,
-    },
-  })
+  return await prisma.settingList
+    .create({
+      data: {
+        userId,
+        configDetail: JSON.stringify(configDetail),
+        configName,
+        configType,
+      },
+    })
+    .catch((error) => {
+      console.log(error)
+    })
 }
 
 /**

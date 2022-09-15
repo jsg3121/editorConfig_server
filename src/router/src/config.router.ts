@@ -13,19 +13,21 @@ export const configRouter = Router()
 configRouter.post<'/file', unknown, unknown, ConfigRequest.POST>(
   '/file',
   async (req, res) => {
-    const { userId, type, value } = req.body
+    const { userId, configType, configDetail } = req.body
 
     try {
       await requestTokenCheck(req.headers)
-      if (!userId || !type || !value) {
+      if (
+        userId === undefined ||
+        configType === undefined ||
+        configDetail === undefined
+      ) {
         res.send({
           code: Types.APIRespose.BAD_REQUEST,
           description: '잘못된 요청입니다.',
         })
       }
-
       const create = await ConfigService.createConfig(req.body)
-
       res.send(create)
     } catch (error) {
       res.send(error)

@@ -115,6 +115,7 @@ accountRouter.post<'/login', unknown, unknown, LoginRequestForm>(
           refreshTokenExp,
           email: result.email,
           name: result.name,
+          id: result.id,
         }
         res.send({
           status,

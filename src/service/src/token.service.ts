@@ -81,7 +81,9 @@ const tokenCheck = async (accessToken: string) => {
 
   if (isBlackList) {
     try {
-      const { iss, email, name } = <jwt.JwtPayload>jwt.verify(token, ACCESS_KEY)
+      const { iss, email, name, id } = <jwt.JwtPayload>(
+        jwt.verify(token, ACCESS_KEY)
+      )
 
       const emailCheck = await tokenEmailCheck(email)
       const issCheck = TOKEN_OPTIONS.access.issuer === iss ? true : false
@@ -93,6 +95,7 @@ const tokenCheck = async (accessToken: string) => {
           data: {
             email,
             name,
+            id,
           },
         }
       }
@@ -191,6 +194,7 @@ const headerTokenCheck = async (val: string) => {
     }
     return false
   } catch (error) {
+    console.log('error!!!!!')
     throw {
       code: Types.APIRespose.UNAUTHORIZED,
       description: '권한이 없는 사용자 입니다.',

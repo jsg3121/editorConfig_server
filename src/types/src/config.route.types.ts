@@ -1,8 +1,8 @@
 export type POST = {
-  userId: string
-  type: string
+  userId: number
+  configType: string
   configName: string
-  value: string
+  configDetail: string
 }
 
 export type GET = {
