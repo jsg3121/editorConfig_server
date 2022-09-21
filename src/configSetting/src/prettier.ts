@@ -80,12 +80,8 @@ const Prettier = {
       type: 'boolean',
     },
     printWidth: {
-      desc: '줄 바꿈 할 폭 길이',
+      desc: '줄 바꿈 할 폭 길이 (가독성을 위한 Prettier의 적정 권고 길이는 80입니다)',
       type: 'number',
-      value: `
-            가독성을 위한 Prettier의 적정 권고 길이는 80입니다
-            https://prettier.io/docs/en/options.html#print-width
-            `,
     },
     proseWrap: {
       desc: 'markdown 텍스트의 줄바꿈 방식을 설정합니다 (v1.8.2이상 사용가능)',

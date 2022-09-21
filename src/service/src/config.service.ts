@@ -2,6 +2,7 @@ import {
   createConfigSetting,
   deleteConfigSetting,
   findConfigList,
+  findDetailConfig,
   updateConfigSetting,
 } from '../../database'
 import { ConfigRequest, Types } from '../../types'
@@ -41,6 +42,16 @@ const getConfigList = async (data: ConfigRequest.GET) => {
     })
     .catch((err) => {
       console.log(err)
+      return { code: Types.APIRespose.NO_CONTENT, data: [] }
+    })
+}
+
+const getDetailConfig = async (data: ConfigRequest.GET) => {
+  return await findDetailConfig(data)
+    .then((res) => {
+      return { code: Types.APIRespose.SUCCESS, data: res }
+    })
+    .catch((err) => {
       return { code: Types.APIRespose.NO_CONTENT, data: [] }
     })
 }
@@ -90,4 +101,5 @@ export const ConfigService = {
   getConfigList,
   updateConfig,
   deleteConfig,
+  getDetailConfig,
 }

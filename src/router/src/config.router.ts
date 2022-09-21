@@ -38,21 +38,35 @@ configRouter.post<'/file', unknown, unknown, ConfigRequest.POST>(
 )
 
 /**
- * info : config 파일 가져오기
+ * info : config 파일 가져오기 (모든 파일 가져오기)
  */
-configRouter.get<'/file', unknown, unknown, ConfigRequest.GET>(
-  '/file',
+configRouter.get<'/file/:userId', ConfigRequest.GET>(
+  '/file/:userId',
   async (req, res) => {
     try {
       await requestTokenCheck(req.headers)
 
-      const data = await ConfigService.getConfigList(req.body)
+      const data = await ConfigService.getConfigList(req.params)
 
       res.send(data)
     } catch (error) {
       res.send(error)
     }
     res.end()
+  }
+)
+
+configRouter.get<'/detail/:userId', ConfigRequest.GET>(
+  '/detail/:userId',
+  async (req, res) => {
+    try {
+      await requestTokenCheck(req.headers)
+
+      const data = await ConfigService.getDetailConfig(req.params)
+      res.send(data)
+    } catch (error) {
+      res.send(error)
+    }
   }
 )
 

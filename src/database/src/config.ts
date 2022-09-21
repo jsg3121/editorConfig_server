@@ -42,6 +42,16 @@ export const findConfigList = async (getData: ConfigRequest.GET) => {
   })
 }
 
+export const findDetailConfig = async (getData: ConfigRequest.GET) => {
+  const { userId } = getData
+
+  return await prisma.settingList.findFirst({
+    where: {
+      id: parseInt(userId, 10),
+    },
+  })
+}
+
 /**
  * info : update select config setting
  * @author 장선규 jsg3121
