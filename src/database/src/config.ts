@@ -59,16 +59,16 @@ export const findDetailConfig = async (getData: ConfigRequest.GET) => {
  * @returns
  */
 export const updateConfigSetting = async (patchData: ConfigRequest.PATCH) => {
-  const { userId, value, configName } = patchData
+  const { id, configDetail, configName } = patchData
 
   return await prisma.settingList.update({
     data: {
-      configDetail: JSON.stringify(value),
+      configDetail: JSON.stringify(configDetail),
       updateAt: new Date(),
       configName,
     },
     where: {
-      id: parseInt(userId, 10),
+      id: parseInt(id, 10),
     },
   })
 }

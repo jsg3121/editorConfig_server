@@ -10,9 +10,9 @@ export type GET = {
 }
 
 export type PATCH = {
-  userId: string
+  id: string
   configName: string
-  value: string
+  configDetail: string
 }
 
 export type DELETE = {
