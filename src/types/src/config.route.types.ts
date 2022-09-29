@@ -11,8 +11,11 @@ export type GET = {
 
 export type PATCH = {
   id: string
+  userId: string
   configName: string
-  configDetail: string
+  configDetail: {
+    [key: string]: string | number | boolean
+  }
 }
 
 export type DELETE = {

@@ -76,7 +76,6 @@ configRouter.get<'/detail/:userId', ConfigRequest.GET>(
 configRouter.patch<'/file', unknown, unknown, ConfigRequest.PATCH>(
   '/file',
   async (req, res) => {
-    console.log(req.body)
     try {
       await requestTokenCheck(req.headers)
 
