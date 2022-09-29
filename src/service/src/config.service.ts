@@ -65,7 +65,6 @@ const getDetailConfig = async (data: ConfigRequest.GET) => {
 const updateConfig = async (data: ConfigRequest.PATCH) => {
   return await updateConfigSetting(data)
     .then((res) => {
-      console.log(res)
       return { code: Types.APIRespose.SUCCESS, description: '수정되었습니다.' }
     })
     .catch((err) => {

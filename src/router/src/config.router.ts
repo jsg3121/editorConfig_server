@@ -86,7 +86,6 @@ configRouter.patch<'/file', unknown, unknown, ConfigRequest.PATCH>(
       console.log(error)
       res.send(error)
     }
-
     res.end()
   }
 )
@@ -94,13 +93,13 @@ configRouter.patch<'/file', unknown, unknown, ConfigRequest.PATCH>(
 /**
  * info : config 파일 삭제
  */
-configRouter.delete<'/file', unknown, unknown, ConfigRequest.DELETE>(
-  '/file',
+configRouter.delete<'/delete/:userId/:id', ConfigRequest.DELETE>(
+  '/delete/:userId/:id',
   async (req, res) => {
     try {
       await requestTokenCheck(req.headers)
 
-      const deleteCofig = await ConfigService.deleteConfig(req.body)
+      const deleteCofig = await ConfigService.deleteConfig(req.params)
 
       res.send(deleteCofig)
     } catch (error) {
